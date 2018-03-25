@@ -1,15 +1,20 @@
-import React, {Component} from 'react'
-import {StyleSheet, View, Text, Dimensions, Platform, TouchableOpacity, Vibration} from 'react-native'
-
-if (Platform.OS !== 'web') {
-  var Camera = require('react-native-camera').default
-  var BarcodeScanner = require('react-native-barcodescanner')
-}
-
+import React, { Component } from 'react'
+import {
+  StyleSheet,
+  View,
+  Text,
+  Dimensions,
+  Platform,
+  Vibration
+} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import OverlayButton from '../components/base/OverlayButton'
 
-const {height, width} = Dimensions.get('window')
+if (Platform.OS !== 'web') {
+  var Camera = require('react-native-camera').default
+}
+
+const { height, width } = Dimensions.get('window')
 const cameraSize = 250
 const borderColor = 'rgba(255,255,255,0.6)'
 const borderBoxSize = 35
@@ -20,9 +25,11 @@ class QRCode extends Component {
     this.succesed = false
   }
 
-  _onBarCodeRead (result) {
-    const {router, actions} = this.props
-    if (this.succesed) { return }
+  _onBarCodeRead = result => {
+    const { router, actions } = this.props
+    if (this.succesed) {
+      return
+    }
 
     this.succesed = true
     Vibration.vibrate()
@@ -33,7 +40,7 @@ class QRCode extends Component {
     router.pop()
   }
 
-  _onClosePress () {
+  _onClosePress = () => {
     this.props.router.pop()
   }
 
@@ -41,59 +48,48 @@ class QRCode extends Component {
     const closeIcon = (
       <OverlayButton
         position={{ right: 60, top: 60 }}
-        onPress={this._onClosePress.bind(this)}>
+        onPress={this._onClosePress}
+      >
         <View style={styles.iconWrapper}>
           <Icon
             name='ios-close'
             size={40}
             color='rgba(255,255,255,0.7)'
-            style={styles.closeIcon} />
+            style={styles.closeIcon}
+          />
         </View>
       </OverlayButton>
-		)
+    )
 
-		// for web
+    // for web
     if (Platform.OS === 'web') {
       return (
         <View style={styles.camera}>
-          <Text style={styles.infoText}>
-						只有原生 APP 才支持二维码
-					</Text>
+          <Text style={styles.infoText}>只有原生 APP 才支持二维码</Text>
         </View>
       )
     }
-
-		// for android
-    if (Platform.OS === 'android') {
-      return (
-        <View style={styles.cameraWrapper}>
-          <BarcodeScanner
-            onBarCodeRead={this._onBarCodeRead.bind(this)}
-            style={styles.camera} />
-          { closeIcon }
-        </View>
-      )
-    }
-
-		// for ios
+    // for ios
     return (
       <Camera
         ref='camera'
         style={styles.camera}
         aspect={Camera.constants.Aspect.Fill}
-        onBarCodeRead={this._onBarCodeRead.bind(this)}>
+        onBarCodeRead={this._onBarCodeRead}
+      >
         <View style={styles.container}>
           <View style={styles.cameraView}>
             <View key='1' style={[styles.borderLeftTop, styles.borderBox]} />
             <View key='2' style={[styles.borderRightTop, styles.borderBox]} />
             <View key='3' style={[styles.borderLeftBottom, styles.borderBox]} />
-            <View key='4' style={[styles.borderRightBottom, styles.borderBox]} />
+            <View
+              key='4'
+              style={[styles.borderRightBottom, styles.borderBox]}
+            />
           </View>
-          <Text style={styles.infoText}>
-						请将二维码放到框内
-					</Text>
+          <Text style={styles.infoText}>请将二维码放到框内</Text>
         </View>
-        { closeIcon }
+        {closeIcon}
       </Camera>
     )
   }
